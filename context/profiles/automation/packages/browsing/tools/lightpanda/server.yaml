@@ -1,0 +1,35 @@
+description: >-
+  Light/text web browsing via the Lightpanda stdio MCP server — a
+  Chrome-free headless engine for navigating pages, reading content
+  (markdown/html/tree), and structured extraction. Always available (no
+  Chrome dependency). Use for fetching/reading a known URL and for
+  selector-driven extraction. Lightpanda is text-only: it has no
+  layout/paint engine, so it CANNOT read cascaded CSS (getComputedStyle
+  returns UA defaults), geometry (offsetWidth/getBoundingClientRect),
+  screenshots, or console/network output — for those, escalate to the
+  Playwright MCP server (browser_* tools), which coexists with these
+  tools. Curated subset pinned to the 0.3.x lightpanda release.
+import:
+  kind: mcp
+  transport: stdio
+  command: [lightpanda, mcp]
+  env:
+    set:
+      LIGHTPANDA_DISABLE_TELEMETRY: "true"
+  # Curated subset of lightpanda's tools. Tool descriptions come from the
+  # upstream lightpanda server (single source of truth). The full lightpanda
+  # tool set (click/fill/press/waitFor*/evaluate/etc.) is available by
+  # selecting `all`; Playwright covers the visual/screenshot/CSS-cascade tasks
+  # lightpanda cannot do (lightpanda is a text-only engine with no
+  # layout/paint).
+  select:
+    - goto
+    - markdown
+    - html
+    - tree
+    - links
+    - extract
+    - structuredData
+    - search
+    - getUrl
+    - getEnv

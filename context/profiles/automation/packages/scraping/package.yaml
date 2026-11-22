@@ -1,0 +1,5 @@
+description: >-
+  Chrome-free web scraping with lightpanda PandaScript: the web_scraping
+  skill (list-to-detail, auth-gated and CSR content, structured
+  extraction).
+binds_to_depth: main...
