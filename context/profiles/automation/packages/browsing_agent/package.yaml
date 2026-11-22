@@ -1,0 +1,5 @@
+description: >-
+  Instructions for the browser_procedure agent (procedure depth):
+  complete one web step with the lightpanda tools and escalate visual
+  work to Playwright. Opt-in; activated by the agent.
+binds_to_depth: procedure

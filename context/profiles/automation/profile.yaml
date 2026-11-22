@@ -1,5 +1,20 @@
 title: Browser Automation
 description: >-
-  Lightpanda and Playwright browser automation for agents: rendering
-  models, the Lightpanda MCP server, the browser procedure agent,
-  frontend validation and web scraping.
+  Agent-driven web browsing, validation and scraping: Lightpanda light
+  (text-only, Chrome-free) browsing and PandaScript extraction, the
+  Playwright escalation path for visual, cascade and screenshot work,
+  rendering models, frontend validation (accessibility structure,
+  functional testing, consistency and localization, visual system
+  styles), and Chrome-free scraping patterns. Framework-agnostic:
+  frontend-web consumers (the typescript module) and standalone
+  scraping consumers both adopt it. Extends the design module's web
+  profile, because the validation references cite design vocabulary
+  throughout (accessibility, color, typography, spacing, the component
+  taxonomy).
+extends:
+  - github.com/ctxmod/design/context/profiles/web
+packages:
+  add:
+    - browsing
+    - web_validation
+    - scraping

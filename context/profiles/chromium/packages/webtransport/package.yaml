@@ -1,0 +1,7 @@
+description: >-
+  Chromium and WebKit certificate and handshake behaviour on
+  QUIC/HTTP3 and WebTransport: the TCP/QUIC trust divergence, no
+  client certificates over QUIC, the serverCertificateHashes 14-day
+  cap, Safari WebTransport requirements, quic-go/webtransport-go
+  compatibility, and diagnosis signals.
+binds_to_depth: main...

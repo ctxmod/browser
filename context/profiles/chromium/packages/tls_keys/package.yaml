@@ -1,0 +1,4 @@
+description: >-
+  Where TLS-usable client keys can come from: no browser exposes a
+  WebCrypto CryptoKey to a TLS CertificateRequest.
+binds_to_depth: main...

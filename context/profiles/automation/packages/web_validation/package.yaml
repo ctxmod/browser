@@ -1,0 +1,6 @@
+description: >-
+  Frontend validation against a live rendered app: the lightpanda versus
+  Playwright capability map, accessibility structure, functional
+  testing, consistency and localization, visual system styles, Playwright
+  WebKit facts, and the frontend_validation skill.
+binds_to_depth: main...

@@ -1,0 +1,17 @@
+description: >-
+  Agent web browsing: Lightpanda light (text-only, Chrome-free) browsing
+  and PandaScript extraction, rendering models and wait strategy, the
+  lightpanda MCP server with its curated tool subset, and the
+  browser_procedure agent.
+binds_to_depth: main...
+agents:
+  browser_procedure:
+    name: browser_procedure
+    description: >-
+      Procedure-depth browsing agent: follows a procedure to browse, read,
+      and extract web content with the lightpanda tools, escalating to
+      Playwright for visual work.
+    agent_depth: procedure
+    packages:
+      - browsing
+      - browsing_agent
