@@ -1,0 +1,13 @@
+title: Browser Automation and Web Validation
+description: >-
+  Driving browsers for agents: Lightpanda and Playwright automation,
+  rendering models, frontend validation (accessibility structure,
+  functional testing, consistency and localization, visual system
+  styles) and web scraping; plus Chromium platform facts
+  (QUIC/WebTransport certificate policy, WebCrypto keys and TLS,
+  Chrome policy sources).
+path: github.com/ctxmod/browser/context
+requires:
+  - github.com/ctxmod/design/context
+default_profiles:
+  - automation
