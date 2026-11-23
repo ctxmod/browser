@@ -3,3 +3,9 @@ description: >-
   skill (list-to-detail, auth-gated and CSR content, structured
   extraction).
 binds_to_depth: main...
+prompt: |
+  # Web scraping
+
+  Before you scrape or extract data from web pages, read the web_scraping
+  skill (`context/profiles/automation/packages/scraping/skills/web_scraping/SKILL.md`
+  in the github.com/ctxmod/browser repository) and follow it.

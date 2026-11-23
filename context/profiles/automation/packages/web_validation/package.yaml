@@ -4,3 +4,11 @@ description: >-
   testing, consistency and localization, visual system styles, Playwright
   WebKit facts, and the frontend_validation skill.
 binds_to_depth: main...
+prompt: |
+  # Frontend validation
+
+  Before you validate a rendered frontend (functionality, accessibility
+  structure, styles, consistency, localization), read the
+  frontend_validation skill
+  (`context/profiles/automation/packages/web_validation/skills/frontend_validation/SKILL.md`
+  in the github.com/ctxmod/browser repository) and follow it.
