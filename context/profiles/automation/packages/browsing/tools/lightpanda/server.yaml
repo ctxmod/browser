@@ -6,9 +6,10 @@ description: >-
   selector-driven extraction. Lightpanda is text-only: it has no
   layout/paint engine, so it CANNOT read cascaded CSS (getComputedStyle
   returns UA defaults), geometry (offsetWidth/getBoundingClientRect),
-  screenshots, or console/network output — for those, escalate to the
+  screenshots, or network output — for those, escalate to the
   Playwright MCP server (browser_* tools), which coexists with these
-  tools. Curated subset pinned to the 0.3.x lightpanda release.
+  tools. Curated subset checked against the 1.0.x lightpanda tool set
+  (all ten names present in 1.0.5).
 import:
   kind: mcp
   transport: stdio
@@ -19,7 +20,9 @@ import:
   # Curated subset of lightpanda's tools. Tool descriptions come from the
   # upstream lightpanda server (single source of truth). The full lightpanda
   # tool set (click/fill/press/waitFor*/evaluate/etc.) is available by
-  # selecting `all`; Playwright covers the visual/screenshot/CSS-cascade tasks
+  # selecting `all` (it also includes `consoleLogs`, which drains captured
+  # console messages, and a `screenshot` that renders markdown, not
+  # pixels); Playwright covers the visual/screenshot/CSS-cascade tasks
   # lightpanda cannot do (lightpanda is a text-only engine with no
   # layout/paint).
   select:
