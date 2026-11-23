@@ -5,7 +5,7 @@ description: >-
   rendering-model wait strategy, escalating to Playwright only for
   JS-execution, console, network, or screenshot needs. Use for: scrape,
   extract data, web scraping, crawl, pandascript, data extraction.
-binds_to_depth: main...
+gated_by_depth: main...
 ---
 
 # Web Scraping

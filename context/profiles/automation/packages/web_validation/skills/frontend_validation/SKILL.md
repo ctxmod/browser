@@ -5,7 +5,7 @@ description: >-
   Playwright. Use for: validate frontend, browser test, a11y check,
   design validation, check rendering, frontend quality, accessibility
   check, visual validation.
-binds_to_depth: main...
+gated_by_depth: main...
 ---
 
 # Frontend Validation
