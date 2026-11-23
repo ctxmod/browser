@@ -1,17 +1,22 @@
 # Lightpanda PandaScript
 
-Lightpanda PandaScript — deterministic, LLM-free web extraction in a dedicated V8 context via the Page object API (goto/extract/evaluate); sync agent primitives, $LP_* credential placeholders, list-to-detail pattern.
+Lightpanda PandaScript — deterministic, LLM-free web extraction in a dedicated V8 context via the Page object API (goto/extract/evaluate), run with `lightpanda run`; output via top-level `return`, $LP_* credential placeholders, list-to-detail pattern. Current against Lightpanda 1.0.x (checked 2026-11-23).
 
 A PandaScript is a web automation script run directly by the Lightpanda
 browser — no Node/Python, no Puppeteer/Playwright, no CDP serialization
 cost, no LLM required: vanilla JavaScript plus a small set of native
 primitives. It is reproducible, deterministic, and token-free.
 
-Run with:
+Run (replay) with:
 
 ```
-lightpanda agent <script>.js
+lightpanda run <script>.js
+cat <script>.js | lightpanda run -     # or from stdin
 ```
+
+`lightpanda agent` is the interactive, LLM-driven REPL that *records* a
+session; its `/save` command writes the PandaScript that `lightpanda run`
+replays without a model.
 
 Always disable telemetry in any process that launches lightpanda:
 
@@ -29,29 +34,33 @@ LIGHTPANDA_DISABLE_TELEMETRY=true
   filesystem/network API. Standard ECMAScript built-ins (`JSON.parse`,
   `JSON.stringify`, arrays, objects, loops) are available.
 - **Agent variables persist across primitive calls and navigations** for
-  one script run; a later `lightpanda agent script.js` starts fresh. Page
+  one script run; a later `lightpanda run script.js` starts fresh. Page
   scripts cannot see agent variables, and vice versa.
-- **Completion value is printed automatically** (objects/arrays as JSON).
-  End the script with the bare expression you want as output. Use
-  `console.log(...)` only for debug output (it does not JSON-format objects).
+- **Output is the top-level `return` value** (objects/arrays printed as
+  JSON). A bare trailing expression is **not** printed in 1.0.x — scripts
+  written for the 0.3.x "completion value" convention must end in `return`.
+  Use `console.log(...)` only for debug output (it does not JSON-format
+  objects).
 
-## Async form (resolved)
+## Async form
 
-Two equivalent surfaces exist; the canonical scripts use the **`Page`
-object API**, which compiles as a module and **does allow top-level
-`await`**:
+Scripts use the **`Page` object API**; the body runs inside an async
+wrapper, so **top-level `await` is allowed**. Exactly two methods are
+asynchronous and must be awaited — **`goto` and `evaluate`**. Every other
+method (`extract`, `click`, `fill`, the `waitFor*` family, …) is synchronous
+and blocking:
 
 ```js
 const page = new Page();
 await page.goto("https://example.com");
-const title = page.evaluate("document.title");
-title; // printed automatically
+const title = await page.evaluate("document.title");
+return title;
 ```
 
-The **standalone agent-context primitives** path (bare `extract(...)`,
-`evaluate(...)` with no `Page`) is synchronous and blocking: top-level
-`await` is a `SyntaxError` there, and `.then` callbacks only run after the
-script body finishes. Prefer the `Page` object form for navigation flows.
+Forgetting `await` on `evaluate` yields `[object Promise]` where a value was
+expected. (The 0.3.x-era standalone primitives — bare `extract(...)` with no
+`Page`, synchronous, no top-level `await` — are not the documented 1.0.x
+surface; write new scripts against `Page`.)
 
 ## Structured extraction
 
@@ -74,7 +83,7 @@ const data = page.extract({
     }
   }]
 });
-data; // -> { title, stories: [...] }
+return data; // -> { title, stories: [...] }
 ```
 
 Equivalent forms: `page.extract({ title: "h1" })`,
@@ -89,7 +98,7 @@ context (where `window`/`document` exist):
 
 ```js
 await page.goto("https://example.com");
-const title = page.evaluate("document.title");
+const title = await page.evaluate("document.title");
 ```
 
 Keep the boundary clear: page `evaluate` cannot see agent variables, cannot
@@ -145,8 +154,12 @@ Common failures:
 - `ReferenceError: document is not defined` — used DOM in the agent
   context. Use `extract(...)` or `page.evaluate(...)`.
 - `ReferenceError: require is not defined` — agent scripts are not Node.
-- `no page loaded - run goto(url) first` — a page primitive ran before
+- `[object Promise]` where a value was expected — `evaluate` is async;
+  `await` it.
+- `no page loaded - run page.goto(url) first` — a page primitive ran before
   navigation.
+- `invalid arguments` — wrong argument count or shape, or a value that is
+  not JSON-serializable.
 - `extract: no schema selector matched any element` — every schema field
   missed (an empty region yields `null`/`[]` per field, not this error).
 
@@ -183,7 +196,7 @@ for (const story of stories) {
   });
   story.comments = comments;
 }
-stories; // printed automatically as JSON
+return stories; // printed as JSON
 ```
 
 ## Where PandaScript fits
@@ -192,11 +205,47 @@ stories; // printed automatically as JSON
   browsing alongside Playwright (visual). The `browsing` package declares it
   as the `lightpanda` server with a curated tool subset
   (`tools/lightpanda/server.yaml`); a harness may proxy that subset under its
-  own tool namespace.
-- PandaScript (`lightpanda agent <script>.js`) is the deterministic,
+  own tool namespace. The server can trim its own `tools/list` with
+  `--tools goto,tree,…` (`lightpanda mcp --list-tools` prints the names).
+- **Shared MCP over HTTP**: `lightpanda mcp --port <n>` serves JSON-RPC at
+  `/mcp`, one browsing session (page, cookies, storage) per `Mcp-Session-Id`;
+  agents that send the same id share a context, and `session_new` /
+  `session_list` / `session_close` manage them explicitly.
+- **Scripts through MCP**: the MCP-only `save` tool writes the current session
+  as a PandaScript and `run` executes one (source or saved path) in the
+  caller's session, returning its console output and `return` value — pages
+  close when it ends, cookies and storage persist, default timeout 60 s.
+- PandaScript (`lightpanda run <script>.js`) is the deterministic,
   replayable extraction format — preferred over interactive MCP calls when
   the extraction shape is known up front and token efficiency matters.
 
-Lightpanda is AGPL-3.0, used here as an external subprocess (not linked Go
-code), reached via PATH. Pin release tags (bare-numbered, e.g. `0.3.3`).
+## Version and behaviour notes (1.0.x)
 
+- **1.0.0 (2026-10-02)** left beta; the latest patch release checked is
+  **1.0.5** (2026-11-20). Pin a bare-numbered release tag (e.g. `1.0.5`), not
+  `nightly`.
+- **CORS is enforced by default** since 1.0.0 for page-initiated
+  `fetch`/XHR (CDP-driven navigation is unaffected); `--disable-features cors`
+  is the escape hatch, not a default.
+- **Sub-resources are opt-in** since 0.4.0: iframes, workers and *external
+  stylesheets* load only with `--load-resources iframe|worker|stylesheet`
+  (repeat the flag). Any check that reads linked CSS text needs
+  `--load-resources stylesheet`.
+- `--dump png` / `--dump pdf` (and the `screenshot` primitive) render the
+  page's **markdown**, not the visual page — they are not screenshots.
+- Lightpanda speaks **CDP and WebDriver BiDi** (`serve --protocol`), so
+  Puppeteer and Playwright `connectOverCDP` clients can drive it; it remains a
+  non-rendering engine, so any client step that needs paint or geometry
+  still escalates to a real browser.
+
+Lightpanda is AGPL-3.0, used here as an external subprocess (not linked Go
+code), reached via PATH.
+
+## Sources
+
+- https://lightpanda.io/docs/usage/pandascript — PandaScript: `lightpanda run`, top-level `return` output, async `goto`/`evaluate`, Page API, extract schema forms, error list; accessed 2026-11-23
+- https://raw.githubusercontent.com/lightpanda-io/browser/main/README.md — agent mode, `/save`, `lightpanda run -`, MCP `--tools`, HTTP transport and sessions, `run`/`save` tools, dump modes, CDP and BiDi; main at 1.1.0-dev, accessed 2026-11-23
+- https://lightpanda.io/blog/posts/lightpanda-1-0 — 1.0 out of beta, CORS default, no rendering or real screenshots, `--load-resources` (0.4.0); accessed 2026-11-23
+- https://github.com/lightpanda-io/browser/releases/tag/1.0.0 — 1.0.0 breaking changes (CORS default, read-only getComputedStyle, locale) and notable changes; accessed 2026-11-23
+- https://github.com/lightpanda-io/browser/releases/tag/0.4.0 — opt-in iframes/workers/stylesheets, BiDi, markdown-rendered png/pdf dumps; accessed 2026-11-23
+- https://hub.docker.com/r/lightpanda/browser/tags — release tag list (1.0.0 2026-10-02 … 1.0.5 2026-11-20); accessed 2026-11-23

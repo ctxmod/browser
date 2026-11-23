@@ -69,7 +69,8 @@ the real layout. The recipe:
 2. Parse both to RGB triples.
 3. Compute relative luminance and the WCAG contrast ratio **in the agent** (the
    math, below), and compare to the threshold for the element's text size
-   (4.5:1 body, 3:1 large ≥ 18px / ≥ 14px bold).
+   (4.5:1 body, 3:1 large: computed `fontSize` ≥ 24px, or ≥ 18.66px with
+   `fontWeight` ≥ 700 — WCAG's 18 pt / 14 pt bold in CSS pixels).
 
 The extraction snippet (returns `{fg, bg}` plus the painted size so the agent
 picks the right threshold):

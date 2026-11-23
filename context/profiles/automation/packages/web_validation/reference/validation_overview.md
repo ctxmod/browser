@@ -48,6 +48,20 @@ These references mechanize the **convergent** set and tell you honestly where th
 > checks escalate to Playwright (or, for token *values* only, parse the raw
 > `<style>` text). Source: the probe report.
 
+> **Version drift (checked 2026-11-23).** The probes behind this map ran against
+> lightpanda 0.3.x and the curated MCP subset. Since then: 0.4.0 made external
+> stylesheets, iframes and workers opt-in (`--load-resources stylesheet` is
+> required before raw linked-CSS text can be read); 1.0.0 split the style
+> cascade into property groups, honours `!important` on tracked stylesheet
+> properties, resolves `width`/`height` from stylesheet rules and makes
+> `getComputedStyle` results read-only; and the full tool set (outside the
+> curated subset) has a `consoleLogs` tool that drains captured console
+> messages. So the **computed-style, custom-property and console rows below
+> may have moved — re-probe them on the pinned release before relying on
+> either verdict.** The no-paint, no-layout rows (geometry, target size,
+> responsive matrix, screenshots, network list) still hold: lightpanda does
+> not render pages.
+
 | Check | lightpanda | Playwright | Notes |
 |---|---|---|---|
 | Semantic/a11y tree | YES `fetch --dump semantic_tree_text` | YES `browser_snapshot` | lightpanda omits heading level; Playwright includes `[level=N]` + `/url:` |
@@ -64,7 +78,7 @@ These references mechanize the **convergent** set and tell you honestly where th
 | `document.styleSheets` iteration | **NO** — "not iterable" | YES | use raw text on lightpanda |
 | Responsive / breakpoints | **NO** | **YES** `browser_resize` (375px → h1 343px) | Playwright only |
 | Screenshot / painted pixels | **NO** | **YES** `browser_take_screenshot` (png base64, ~23 KB) | Playwright only |
-| Console messages | **NO** | **YES** `browser_console_messages` (favicon 404; clean hydration) | Playwright only |
+| Console messages | **NO** in the probed subset (a `consoleLogs` tool exists in the full set — re-probe) | **YES** `browser_console_messages` (favicon 404; clean hydration) | Playwright for the probed path |
 | Network requests | **NO** | **YES** `browser_network_requests` (`static:true` for assets) | Playwright only |
 
 ## The default-first rule
@@ -238,3 +252,9 @@ the cascade — see <ctxmod_link path="ctx:github.com/ctxmod/browser/context::sh
 - <ctxmod_link path="ctx:github.com/ctxmod/browser/context::shared::browsing@automation/reference/lightpanda.md" />
 - `principles/reference/accessibility_as_quality.md` in `github.com/ctxmod/design/context` (profile `core`)
 - `principles/reference/visual_hierarchy.md` in `github.com/ctxmod/design/context` (profile `core`)
+
+## Sources
+
+- https://github.com/lightpanda-io/browser/releases/tag/0.4.0 — external stylesheets, iframes and workers opt-in via `--load-resources`; accessed 2026-11-23
+- https://github.com/lightpanda-io/browser/releases/tag/1.0.0 — style cascade split into property groups, `!important` on tracked properties, width/height from stylesheet rules, read-only `getComputedStyle`; accessed 2026-11-23
+- https://raw.githubusercontent.com/lightpanda-io/browser/1.0.5/src/browser/tools.zig — 1.0.5 browser tool enum (includes `consoleLogs`, `screenshot`); accessed 2026-11-23
