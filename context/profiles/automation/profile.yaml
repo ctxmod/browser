@@ -7,12 +7,10 @@ description: >-
   functional testing, consistency and localization, visual system
   styles), and Chrome-free scraping patterns. Framework-agnostic:
   frontend-web consumers (the typescript module) and standalone
-  scraping consumers both adopt it. Extends the design module's web
-  profile, because the validation references cite design vocabulary
-  throughout (accessibility, color, typography, spacing, the component
-  taxonomy).
-extends:
-  - github.com/ctxmod/design/context/profiles/web
+  scraping consumers both adopt it. It does not extend the design
+  module: the validation references point to the design files they
+  cite, and a consumer that writes interface code selects the design
+  profiles itself.
 packages:
   add:
     - browsing

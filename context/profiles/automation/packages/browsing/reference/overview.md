@@ -33,10 +33,15 @@ Each tier specializes the one above it. A scraping-only session takes
 `automation`; a frontend-web session takes the typescript module's profiles
 and inherits browsing context.
 
-The browser references cite design-tier vocabulary throughout —
-accessibility, color, typography, spacing, the component taxonomy — so this
-profile extends the design module's `web` profile, and adopting `automation`
-delivers the design context those citations resolve against.
+The validation references cite design-tier vocabulary throughout —
+accessibility, color, typography, spacing, the component taxonomy — and
+name each design file they rely on (`principles/reference/color.md` in
+`github.com/ctxmod/design/context`, profile `core`, and so on). The
+profile does not extend the design module, because browsing, scraping and
+the Lightpanda tools need none of it, and the validation work that does is
+on demand. Read a cited file when a validation step names it. A consumer
+that writes interface code selects the design module's `web` profile
+itself, conditioned on the files it governs.
 
 ## Why a profile, not a global reference
 
