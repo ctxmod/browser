@@ -31,7 +31,13 @@ the rendered docs. Notes on the mirror:
 - GitHub API file reads on `chromium/chromium` work for files < ~1 MB;
   directory listings also work.
 - `chrome/browser/policy/` does NOT contain the definitions YAML — it
-  is under `components/policy/`.
+  is under `components/policy/`, grouped by category directory, e.g.
+  `policy_definitions/ContentSettings/AutoSelectCertificateForUrls.yaml`
+  (re-verified 2026-11-23; a policy is not always where its name suggests,
+  so list the category directories rather than guessing).
+- `chrome/VERSION` on the same mirror gives the trunk milestone (MAJOR=160 on
+  2026-11-23) — a quick extractable check of how far trunk is ahead of the
+  stable milestone a policy note was written against.
 
 ## Cross-check mirror: Microsoft Edge per-policy pages
 
@@ -40,6 +46,18 @@ The Microsoft Edge per-policy pages
 are a server-rendered verbatim mirror of the policy definitions —
 useful for cross-checking a policy's semantics and support matrix
 without touching the SPA.
+
+## Policy changes per release
+
+The Chrome browser Enterprise and Education release notes — the per-milestone
+list of new, changed and deprecated policies — moved off
+`support.google.com/chrome/a/answer/7679408`, which now carries ChromeOS notes
+plus links to past browser releases (newest listed on 2026-11-23: Chrome 154,
+2026-09-23). The browser notes now live at
+`chromeenterprise.google/intl/en_en/resources/release-notes/`, which returns
+only a template shell to a text fetcher (an unfilled `__RELEASE_DATE__`
+placeholder, no entries). For an extractable change feed, diff the policy
+definitions YAML between milestone branches on the source mirror instead.
 
 ## Search fallback: DDG HTML endpoint
 
@@ -74,3 +92,10 @@ Snap-packaged Chromium reads managed policies from
 `/etc/chromium-browser/policies/managed/` only, and
 `AutoSelectCertificateForUrls` is the policy that governs UI-less
 client-cert fetches.
+
+## Sources
+
+- https://raw.githubusercontent.com/chromium/chromium/main/components/policy/resources/templates/policy_definitions/ContentSettings/AutoSelectCertificateForUrls.yaml — canonical policy YAML path, fetched 2026-11-23
+- https://raw.githubusercontent.com/chromium/chromium/main/chrome/VERSION — trunk MAJOR=160, fetched 2026-11-23
+- https://support.google.com/chrome/a/answer/7679408 — release notes moved notice; past browser releases listed through Chrome 154 (2026-09-23); accessed 2026-11-23
+- https://chromeenterprise.google/intl/en_en/resources/release-notes/ — current release-notes location; template shell to text fetchers; accessed 2026-11-23

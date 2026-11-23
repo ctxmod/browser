@@ -12,6 +12,11 @@ compatibility.
 > upstream Chromium bug that gets fixed — re-verify on newer Chromium
 > versions before assuming either direction.
 
+> **Platform status (checked 2026-11-23).** WebTransport became Baseline
+> newly available on 2026-03-24, when Safari 26.4 (macOS and iOS) joined
+> Chromium (97+) and Firefox (114+); Safari-facing WT is now a mainstream
+> target, which is why the WebKit-specific requirements below matter.
+
 ## TCP/QUIC trust divergence
 
 Chromium applies **different certificate verification on the QUIC/h3
@@ -136,7 +141,11 @@ abandons the session in response.
   session (multi-session ClientConn arrived in v0.12).
 - **Never bump quic-go past v0.60 or webtransport-go past v0.11 without a
   real-Safari 26.5 verification round** (a repro rig of variant listeners
-  on a port range plus a variants page).
+  on a port range plus a variants page). Upstream has moved on — as of
+  2026-11-23 the latest tags are quic-go v0.65.0 (2026-11-03) and
+  webtransport-go v0.13.0 (2026-08-30), with a v0.11.1 patch on the pinned
+  line — so the pin is a deliberate hold, re-tested per release, not an
+  oversight.
 
 Safari requires the `WT_INITIAL_MAX_*` SETTINGS trio alongside
 `SETTINGS_WT_MAX_SESSIONS`: `STREAMS_UNI` (0x2b64), `STREAMS_BIDI`
@@ -183,3 +192,9 @@ not in webtransport-go.
   — why in-browser-generated keys never reach the TLS client-auth stack.
 - <ctxmod_link path="ctx:github.com/ctxmod/browser/context::shared::policy_research@chromium/reference/chrome_policy_sources.md" />
   — where to research Chrome policies such as `AutoSelectCertificateForUrls`.
+
+## Sources
+
+- https://api.webstatus.dev/v1/features/webtransport — WebTransport Baseline newly available 2026-03-24 (Chrome 97, Firefox 114, Safari 26.4); queried 2026-11-23
+- https://proxy.golang.org/github.com/quic-go/quic-go/@latest — quic-go v0.65.0, 2026-11-03; queried 2026-11-23
+- https://proxy.golang.org/github.com/quic-go/webtransport-go/@v/list — webtransport-go tags through v0.13.0 (2026-08-30), including v0.11.1; queried 2026-11-23
