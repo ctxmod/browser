@@ -12,7 +12,9 @@ It is deliberately upstream of plumbing:
 - **MCP server wiring.** The `browsing` package declares the Lightpanda
   (light/text, Chrome-free) stdio MCP server with a curated tool subset. The
   Playwright (visual, Chrome-dependent) MCP server is the escalation path for
-  visual, cascade, screenshot, console and network work; a harness wires it.
+  visual, cascade, screenshot, console and network work; a harness wires it
+  (or uses the token-cheaper `playwright-cli` — see
+  <ctxmod_link path="ctx:github.com/ctxmod/browser/context::shared::browsing@automation/reference/playwright.md" />).
   The reference context here is what makes those tools and PandaScript usable.
 - **Frontend implementation** (React, Tailwind, shadcn) belongs to the
   frontend-framework modules (`github.com/ctxmod/typescript/context`), which

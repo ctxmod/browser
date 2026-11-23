@@ -1,8 +1,9 @@
 description: >-
   Agent web browsing: Lightpanda light (text-only, Chrome-free) browsing
   and PandaScript extraction, rendering models and wait strategy, the
-  lightpanda MCP server with its curated tool subset, and the
-  browser_procedure agent.
+  lightpanda MCP server with its curated tool subset, the Playwright
+  escalation surface (MCP vs CLI, snapshot-first interaction, ARIA
+  snapshots, clock, Test Agents), and the browser_procedure agent.
 binds_to_depth: main...
 agents:
   browser_procedure:
